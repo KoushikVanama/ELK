@@ -1,0 +1,362 @@
+GET _cat/shards
+
+GET _cat/indices
+GET _cat/indices/employee
+
+GET employee/_search
+GET employee/_doc/iYecjocByy6mUPzdSHQt
+GET employee/_doc/10
+
+POST employee/_doc/iYecjocByy6mUPzdSHQt
+{
+  "Name": "ABC",
+  "Age": 23,
+  "Salary": 45000
+}
+
+POST employee/_doc/10
+{
+  "Name": "ABC",
+  "Age": 23,
+  "Salary": 45000
+}
+
+DELETE employee/_doc/hYeWjocByy6mUPzdpHTg
+
+POST accounts/_doc
+{
+  "accountId": 13234,
+  "accountName": "SOCGEN",
+  "accountType": "CORP"
+}
+
+PUT accounts/_doc/ioepjocByy6mUPzd0XRG
+{
+  "accountId": 1234,
+  "accountName": "SOCGEN",
+  "accountType": "CORP."
+}
+
+GET accounts/_search
+GET _search
+GET accounts/_settings
+GET accounts/_mapping
+GET accounts/_refresh
+
+GET orders/_search
+GET orders/_mapping
+POST orders/_doc
+{
+  "orderId": 2345,
+  "orderName": "inventory_",
+  "orderStatus": "delivered",
+  "orderType": "Soft toys"
+}
+
+POST _bulk
+{ "index" : { "_index": "orders", "_id" : "1" } }
+{ "orderId": 1234,"orderName": "inventory","orderStatus": "inprogress","orderType": "Electronic" }
+{ "index" :{ "_index": "orders", "_id" : "2" } }
+{ "orderId": 2345,"orderName": "inventory_","orderStatus": "delivered","orderType": "Soft toys" }
+
+POST orders/_bulk
+{ "index" : { "_id" : "5" } }
+{ "orderId": 1234,"orderName": "inventory","orderStatus": "inprogress","orderType": "Electronic" }
+{ "index" :{ "_id" : "6" } }
+{ "orderId": 2345,"orderName": "inventory_","orderStatus": "delivered","orderType": "Soft toys" }
+{ "delete" :{ "_id" : "6" } }
+{ "update" :{ "_id" : "j4fRjocByy6mUPzdtXTv" } }
+{ "orderId": 2345,"orderName": "inventory_","orderStatus": "delivered","orderType": "Soft toys" }
+
+POST _bulk
+{ "index" : { "_index" : "test", "_id" : "1" } }
+{ "field1" : "value1" }
+{ "delete" : { "_index" : "test", "_id" : "2" } }
+{ "create" : { "_index" : "test", "_id" : "3" } }
+{ "field1" : "value3" }
+{ "update" : {"_id" : "1", "_index" : "test"} }
+{ "doc" : {"field2" : "value2"} }
+
+PUT actnews
+{
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text"
+      }
+    }
+  }
+}
+
+GET shakespeare/_mapping
+
+GET shakespeare/_search
+{
+  "query": {
+    "match": {
+      "text_entry": "john"
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  "query": {
+    "match": {
+      "text_entry": {
+        "query": "act II",
+        "operator": "and"
+      }
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "merry john",
+      "fields": ["text_entry","play_name"]
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  "query": {
+    "query_string": {
+      "query": "(john OR III) AND Rugby",
+      "default_field": ["text_entry","play_name.keyword"]
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  "query": {
+    "query_string": {
+      "query": "What, John Rugby! John!",
+      "default_field": "text_entry.keyword"
+    }
+  }
+}
+
+GET shakespeare/_mapping
+GET _cat/indices
+GET accounts/_search
+GET shakespeare/_search
+GET shakespeare/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "text_entry": {
+              "query": "Henry IV OR HENRY IV"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+DELETE /accounts
+
+GET accounts/_search
+GET accounts/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "age": 50
+          }
+        },
+        {
+          "range": {
+            "salary": {
+              "gte": 10000,
+              "lte": 100000
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  "query": {
+    "span_near": {
+      "clauses": [
+        {
+          "span_term": {
+            "text_entry": {
+              "value": "john"
+            }
+          }
+        },
+        {
+          "span_term": {
+            "text_entry": {
+              "value": "Arthur"
+            }
+          }
+        }
+      ]
+      "slop": 12,
+      "in_order": false,
+    }
+  }
+}
+
+GET _template
+
+PUT _template/employee
+{
+  "index_patterns": ["emp*"],
+  "settings": {
+    "number_of_shards": 4,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "host_name": { "type": "keyword" }
+    }
+  }
+}
+
+POST empnew/_doc/1
+{
+  "name": "Sai",
+  "age": 25
+}
+
+GET empnew/_settings
+GET empnew/_mapping
+GET empnew/_search
+
+GET _alias
+
+POST /_aliases
+{
+  "actions": [
+    {
+      "add": {
+        "indices": ["accounts","shakespeare"],
+        "alias": "myIndices"
+      }
+    }
+  ]
+}
+
+GET myIndices/_search
+
+#Average in IL state
+GET accounts/_search
+{
+  "query": {
+    "match": {
+      "state": "IL"
+    }
+  },
+  "aggs": {
+    "avgsalary": {
+      "avg": {
+        "field": "balance"
+      }
+    },
+    "avgage": {
+      "avg": {
+        "field": "age"
+      }
+    }
+  }
+}
+GET shakespeare/_mapping
+PUT shakespearenew
+{
+  "mappings": {
+    "properties": {
+      "text_entry": {
+        "type": "text",
+        "index_prefixes": {
+          "min_chars": 1,
+          "max_chars": 2
+        }
+      }
+    }
+  }
+}
+GET shakespeare/_search
+{
+  "query": {
+    "prefix": {
+      "text_entry": {
+        "value": "jo"
+      }
+    }
+  }
+}
+
+POST _reindex
+{
+  "source": {"index": "shakespeare"},
+  "dest": {"index": "shakespeareolddd", "version_type": "internal"}
+}
+
+GET /_cat/indices
+
+GET _analyze
+{
+  "analyzer": "standard",
+  "text": "political waters on Tuesday"
+}
+
+GET /_analyze
+{
+  "char_filter": ["html_strip"], 
+  "tokenizer": "standard",
+  "filter": ["lowercase","stop"],
+  "text": "<div><span>example This is test</span><span>How to play baseball? Explain in 180 characters.</span></div>"
+}
+GET story/_search
+PUT story
+{
+  "mappings": {
+    "properties": {
+      "storycontent": {"type": "text", "analyzer": "myanalyzer"}
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "myanalyzer": {
+          "type": "custom",
+          "filter": ["lowercase", "stop"],
+          "char_filters": "html_strip"
+        }
+      }
+    }
+  }
+}
+
+GET _cat
+
+GET employees/_search
+GET _cat/cluster/health
+
+PUT _cluster/settings
+
+POST /mynewindex2?pretty
+
+PUT /mynewindex/_doc/1?
+{
+  "name": "sai"
+}
+
+GET _cat/_cluster
